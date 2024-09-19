@@ -66,7 +66,14 @@ class OrientedRPNHead(RPNHead):
             hbboxes = rbox2hbox(bboxes)
             det_bboxes, keep_idxs = batched_nms(hbboxes, results.scores,
                                                 results.level_ids, cfg.nms)
-            results = results[keep_idxs]
+            # # Original implement: significantly slow down the inference speed
+            # results = results[keep_idxs]
+            # =======New implement========
+            results_ = InstanceData()
+            for k, v in results.items():
+                results_[k] = v[keep_idxs]
+            results = results_
+            # # ============================
             # some nms would reweight the score, such as softnms
             results.scores = det_bboxes[:, -1]
             results = results[:cfg.max_per_img]

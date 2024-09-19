@@ -10,6 +10,7 @@ from torch import Tensor
 from mmrotate.registry import TASK_UTILS
 from mmrotate.structures.bbox import (RotatedBoxes, qbox2rbox, rbox2hbox,
                                       rbox2qbox)
+from mmrotate.structures.bbox.box_converters import qbox2rbox_torch
 
 
 @TASK_UTILS.register_module()
@@ -251,6 +252,7 @@ def delta2bbox(rois: Tensor,
                                          *center_polys_shape[:3], 4, 1)
     center_polys = center_polys.view(center_polys_shape)
     rectpolys = center_polys + center
-    rbboxes = qbox2rbox(rectpolys).view(delta_shape[:-1] + (5, ))
+    # rbboxes = qbox2rbox(rectpolys).view(delta_shape[:-1] + (5, ))
+    rbboxes = qbox2rbox_torch(rectpolys).view(delta_shape[:-1] + (5, ))
 
     return rbboxes
